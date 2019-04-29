@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdio.h>
+#include <conio.h>
 #include <windows.h>
 
 #define false 0
@@ -16,10 +17,10 @@ int setX(int block[4][2], int index, int value);
 int setY(int block[4][2], int index, int value);
 void getShape();
 void Piece();
-void RightRotation();
+void rotationRight();
 void setMain();
 void drawMain();
-int crush_check(int by);
+int crush_check();
 
 int shape[7][4][2] = {
 		{{0, -1}, {0, 0}, {-1, 0}, {-1, 1}}, // 1. 역번개
@@ -48,16 +49,16 @@ int main_height = 22;
 int main_x = 1; // 게임 창 위치
 int main_y = 2;
 
-int screen[22][11];
+int screen[22][11]; // 게임 창
 int screen_cpy[22][11];
 
-int block[4][2];
+int block[4][2]; // 블록
 int block_cpy[4][2];
-int next_block[4][2];
+int next_block[4][2]; // 다음 블록
 
-int isSquale = 0;
+int isSquare = 0;
 
-int bx= 5, by = 10; // 블록 실제 좌표
+int bx= 5, by = 10; // 블록 위치 좌표
 int x, y; // 블록 모양 좌표
 
 void main()
@@ -65,7 +66,7 @@ void main()
 	setMain();
 	drawMain();
 
-	srand(time(NULL));
+	srand((unsigned)time(NULL));
 	getShape();
 
 	while (1) {
@@ -76,12 +77,12 @@ void main()
 
 		if (kbhit()) {
 			system("cls");
-			RightRotation();
+			rotationRight();
 			Piece();
 		}
 		while (kbhit()) getch();
 
-		if (by == main_y + main_height - 3) {
+		if (crush_check()) {
 			Sleep(100000);
 		}
 
@@ -137,7 +138,12 @@ void getShape()
 {
 	int r = (rand() % 7) + 1;
 
-	if (r == 4) isSquale = 1;
+	if (r == 4) {
+		isSquare = 1;
+	}
+	else {
+		isSquare = 0;
+	}
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 2; j++) {
 			block[i][j] = shape[r][i][j];
@@ -150,12 +156,13 @@ void Piece()
 		x = getX(block, i);
 		y = getY(block, i);
 
-		gotoxy(bx + x, by - y);
+		gotoxy(bx + x, by + y);
 		printf("%d", 1);
 	}
 }
-void RightRotation() 
-{
+void rotationRight() 
+{	
+	if (isSquare == 1) return;
 	for (int i = 0; i < 4; i++) {
 		setX(block_cpy, i, getY(block, i));
 		setY(block_cpy, i, -getX(block, i));
@@ -186,7 +193,6 @@ void setMain()
 			}
 		}
 	}
-
 	for (int i = 0; i < main_height; i++) {
 		for (int j = 0; j < main_width; j++) {
 			screen_cpy[i][j] = screen[i][j];
@@ -212,17 +218,14 @@ void drawMain()
 		}
 	}
 }
-int crush_check(int by)
+
+int crush_check()
 {
 	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 2; j++) {
-			int x = get(block, i);
-			int y = get(block, j);
-
-			if (screen[bx][by + y] == 2) {
-				return true;
-			}
+		if (screen[getY(block, i) + by - (main_y -1)][getX(block, i) + bx - main_x] == 2) {
+			return true;
 		}
 	}
 	return false;
 }
+
