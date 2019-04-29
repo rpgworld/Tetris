@@ -1,9 +1,12 @@
 ﻿  hoit.c
-c:\users\data\desktop\c언어\tetris\hello\hoit.c(78): warning C4996: 'kbhit': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _kbhit. See online help for details.
+c:\users\data\desktop\c언어\tetris\hello\hoit.c(258): warning C4996: 'kbhit': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _kbhit. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\conio.h(459): note: 'kbhit' 선언을 참조하십시오.
-c:\users\data\desktop\c언어\tetris\hello\hoit.c(83): warning C4996: 'kbhit': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _kbhit. See online help for details.
+c:\users\data\desktop\c언어\tetris\hello\hoit.c(259): warning C4996: 'getch': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getch. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\conio.h(453): note: 'getch' 선언을 참조하십시오.
+c:\users\data\desktop\c언어\tetris\hello\hoit.c(261): warning C4996: 'getch': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getch. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\conio.h(453): note: 'getch' 선언을 참조하십시오.
+c:\users\data\desktop\c언어\tetris\hello\hoit.c(302): warning C4996: 'kbhit': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _kbhit. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\conio.h(459): note: 'kbhit' 선언을 참조하십시오.
-c:\users\data\desktop\c언어\tetris\hello\hoit.c(105): warning C4244: '함수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\data\desktop\c언어\tetris\hello\hoit.c(132): warning C4716: 'setX': 값을 반환해야 합니다.
-c:\users\data\desktop\c언어\tetris\hello\hoit.c(136): warning C4716: 'setY': 값을 반환해야 합니다.
+c:\users\data\desktop\c언어\tetris\hello\hoit.c(142): warning C4716: 'setY': 값을 반환해야 합니다.
+c:\users\data\desktop\c언어\tetris\hello\hoit.c(138): warning C4716: 'setX': 값을 반환해야 합니다.
   Hello.vcxproj -> C:\Users\Data\Desktop\C언어\Tetris\x64\Debug\Hello.exe

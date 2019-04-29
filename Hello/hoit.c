@@ -7,6 +7,12 @@
 #define false 0
 #define true 1
 
+#define LEFT 75 // 방향키
+#define RIGHT 77
+#define UP 72
+#define DOWN 80
+#define SPACE 32
+
 void circleTest();
 void random();
 
@@ -17,10 +23,14 @@ int setX(int block[4][2], int index, int value);
 int setY(int block[4][2], int index, int value);
 void getShape();
 void Piece();
-void rotationRight();
+void rotateRight();
 void setMain();
 void drawMain();
-int crush_check();
+int check_crush();
+void key_check();
+void dropDown();
+void check_gameOver();
+void check_line();
 
 int shape[7][4][2] = {
 		{{0, -1}, {0, 0}, {-1, 0}, {-1, 1}}, // 1. 역번개
@@ -58,8 +68,12 @@ int next_block[4][2]; // 다음 블록
 
 int isSquare = 0;
 
-int bx= 5, by = 10; // 블록 위치 좌표
+int bx, by; // 블록 위치 좌표
 int x, y; // 블록 모양 좌표
+
+int crush_on = false;
+
+int score = 0; // 점수
 
 void main()
 {
@@ -75,19 +89,11 @@ void main()
 		Piece();
 		Sleep(500);
 
-		if (kbhit()) {
-			system("cls");
-			rotationRight();
-			Piece();
-		}
-		while (kbhit()) getch();
+		key_check();
 
-		if (crush_check()) {
-			Sleep(100000);
-		}
-
-		by++;
-
+		dropDown();
+		check_line();
+		check_gameOver();
 	}
 }
 
@@ -102,7 +108,7 @@ void circleTest()
 void random()
 {
 	int i = 1;
-	srand(time(NULL));
+	srand((unsigned)time(NULL));
 	while (1) {
 
 		int r = (rand() % 7) + 1;
@@ -136,7 +142,9 @@ int setY(int block[4][2], int index, int value)
 }
 void getShape()
 {
-	int r = (rand() % 7) + 1;
+	bx = (main_width / 2) + 1;
+	by = 3;
+	int r = rand() % 7;
 
 	if (r == 4) {
 		isSquare = 1;
@@ -157,10 +165,10 @@ void Piece()
 		y = getY(block, i);
 
 		gotoxy(bx + x, by + y);
-		printf("%d", 1);
+		printf("■");
 	}
 }
-void rotationRight() 
+void rotateRight()
 {	
 	if (isSquare == 1) return;
 	for (int i = 0; i < 4; i++) {
@@ -168,6 +176,12 @@ void rotationRight()
 		setY(block_cpy, i, -getX(block, i));
 	}
 
+	for (int i = 0; i < 4; i++) {
+		if (screen[getY(block_cpy, i) + by - main_y][getX(block_cpy, i) + bx - main_x] == 1
+			|| screen[getY(block_cpy, i) + by - main_y][getX(block_cpy, i) + bx - main_x] == 2) {
+			return;
+		}
+	}
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 2; j++) {
 			block[i][j] = block_cpy[i][j];
@@ -179,10 +193,15 @@ void setMain()
 	for (int i = 0; i < main_height; i++) {
 		for (int j = 0; j < main_width; j++) {
 			if (i == 0) {
-				screen[i][j] = 1;
+				screen[i][j] = 0;
 			}
 			else if (i == main_height - 1) {
-				screen[i][j] = 2;
+				if (j == 0 || j == main_width - 1) {
+					screen[i][j] = 1;
+				}
+				else {
+					screen[i][j] = 2;
+				}
 			}
 			else {
 				if (j == 0 || j == main_width - 1) {
@@ -193,39 +212,138 @@ void setMain()
 			}
 		}
 	}
+}
+void drawMain()
+{
+	for (int i = 0; i < main_height; i++) {
+		for (int j = 0; j < main_width; j++) {
+			if (screen[i][j]) {
+				gotoxy(main_x + j, main_y + i);
+				switch (screen[i][j]) {
+				case 1:
+					printf("▨");
+					break;
+				case 0:
+					printf("  ");
+					break;
+				case 2:
+					printf("▨");
+					break;
+
+				case -2:
+					printf("□");
+					break;
+				}
+			}
+		}
+	}
 	for (int i = 0; i < main_height; i++) {
 		for (int j = 0; j < main_width; j++) {
 			screen_cpy[i][j] = screen[i][j];
 		}
 	}
 }
-void drawMain()
-{
-	for (int i = 0; i < main_height; i++) {
-		for (int j = 0; j < main_width; j++) {
-			gotoxy(main_x + j, main_y + i);
-			switch (screen[i][j]) {
-			case 1:
-				printf("%d", 1);
-				break;
-			case 0:
-				printf("%d", 0);
-				break;
-			case 2:
-				printf("%d", 2);
-				break;
-			}
-		}
-	}
-}
-
-int crush_check()
+int check_crush()
 {
 	for (int i = 0; i < 4; i++) {
-		if (screen[getY(block, i) + by - (main_y -1)][getX(block, i) + bx - main_x] == 2) {
+		if (screen[getY(block, i) + by - (main_y -1)][getX(block, i) + bx - main_x] == 2
+			|| screen[getY(block, i) + by - (main_y - 1)][getX(block, i) + bx - main_x] == -2) {
 			return true;
 		}
 	}
 	return false;
 }
-
+void key_check()
+{
+	if (kbhit()) {
+		int key = getch();
+		if (key == 224) {
+			do { key = getch(); } while (key == 224); // 방향키 지시자 버리기
+			switch (key) {
+			case LEFT:
+				for (int i = 0; i < 4; i++) {
+					if (screen[getY(block, i) + by - main_y][getX(block, i) + bx - (main_x + 1)] == 1 
+						|| screen[getY(block, i) + by - main_y][getX(block, i) + bx - (main_x + 1)] == -2) {
+						return;
+					}
+				}
+				bx--;
+				Piece();
+				break;
+			case RIGHT:
+				for (int i = 0; i < 4; i++) {
+					if (screen[getY(block, i) + by - main_y][getX(block, i) + bx - (main_x -1)] == 1
+						|| screen[getY(block, i) + by - main_y][getX(block, i) + bx - (main_x + 1)] == -2) {
+						return;
+					}
+				}
+				bx++;
+				Piece();
+				break;
+			case UP:
+				rotateRight();
+				Piece();
+				break;
+			case DOWN:
+				by++;
+				Piece();
+				break;
+			}
+		}
+		else {
+			switch (key) {
+			case SPACE:
+				while (!check_crush()) {
+					dropDown();
+				}
+			}
+		}
+	}
+	while (kbhit()) getch();
+}
+void dropDown()
+{
+	if (check_crush()) {
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 2; j++) {
+				screen[getY(block, i) + by - main_y][getX(block, i) + bx - main_x] = -2;
+			}
+		}
+		getShape();
+	}
+	else {
+		by++;
+	}
+}
+void check_gameOver()
+{
+	for (int i = 1; i < main_width - 2; i++) {
+		if (screen[3][i] < 0) {
+			gotoxy(main_x, main_y + 5); printf("▤▤▤▤▤▤▤▤▤▤");
+			gotoxy(main_x, main_y + 6);	printf("▤    GAME OVER   ▤ ");
+			gotoxy(main_x, main_y+7); printf("▤▤▤▤▤▤▤▤▤▤");
+			Sleep(100000);
+		}
+	}
+}
+void check_line()
+{
+	int b_cnt; // 블록갯수
+	
+	for (int i = main_height - 2; i > 3;) {
+		b_cnt = 0;
+		for (int j = 1; j < main_width - 1; j++) {
+			if (screen[i][j] == -2) b_cnt++;
+		}
+		if (b_cnt == main_width - 2) {
+			for (int k = i; k > 2; k--) {
+				for (int l = 1; l < main_width - 1; l++) {
+					screen[k][l] = screen[k - 1][l];
+				}
+			}
+		}
+		else {
+			i--;
+		}
+	}
+}
