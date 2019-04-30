@@ -39,6 +39,7 @@ void check_line(); // 한줄이 가득 찼을때 이벤트 처리
 
 void getScore();
 void pause();
+void reset();
 
 typedef enum { NOCURSOR, SOLIDCURSOR, NORMALCURSOR } CURSOR_TYPE; //커서숨기기
 void setcursortype(CURSOR_TYPE c) { //커서숨기는 메서드 
@@ -94,13 +95,15 @@ int curPieceY;
 
 int score = 0; // 점수
 
+int countL = 0; // l 모양이 더 자주 나오도록..
+
 void main()
 {
 	system("cls");
 	setMain();
 	drawMain();
 
-	srand((unsigned)time(NULL));
+	srand(time(NULL));
 	setcursortype(NOCURSOR);
 	getShape();
 
@@ -117,6 +120,7 @@ void main()
 		check_line();
 		getScore();
 		check_gameOver();
+
 	}
 }
 
@@ -149,6 +153,12 @@ void getShape()
 	by = 3;
 	int r = rand() % 7;
 
+	// 막대기가 너무 안나올 경우를 대비해서...?
+	if (countL == 6) {
+		r == 2;
+		countL = 0;
+	}
+
 	if (r == 4) {
 		isSquare = 1;
 	}
@@ -160,21 +170,25 @@ void getShape()
 			block[i][j] = shape[r][i][j];
 		}
 	}
+	countL++;
 }
 void Piece()
 {
-	for (int i = 0; i < 4; i++){
+	for (int i = 0; i < 4; i++) {
+		curPiece(block, i);
+		int j = curPieceY;
+		while (screen[j][curPieceX] != 2) {
+			if (screen[j][curPieceX] < 0) break;
+			screen[j][curPieceX] = -1;
+			j++;
+		}
+	}
+
+	for (int i = 0; i < 4; i++) {
 		curPiece(block, i);
 		screen[curPieceY][curPieceX] = 3;
 	}
-	/*
-	for (int i = 0; i < 4; i++) {
-		curPiece(block, i);
-		for (int i = curPieceY + 1; i < main_height; i++) {
-			
-		}
-	}
-	*/
+
 }
 void resetPiece()
 {
@@ -182,6 +196,15 @@ void resetPiece()
 		curPiece(block, i);
 		screen[curPieceY][curPieceX] = 0;
 	}
+
+
+	for (int i = 0; i < 4; i++) {
+		curPiece(block, i);
+		for (int j = curPieceY; j < main_height - 1; j++) {
+			if (screen[j][curPieceX] == -1) screen[j][curPieceX] = 0;
+		}
+	}
+
 }
 void rotateRight()
 {
@@ -190,11 +213,11 @@ void rotateRight()
 		setX(block_cpy, i, getY(block, i));
 		setY(block_cpy, i, -getX(block, i));
 	}
-	
+
 	for (int i = 0; i < 4; i++) {
 		curPiece(block_cpy, i);
 		if (screen[curPieceY][curPieceX] == 1
-			|| screen[curPieceY][curPieceX] == 2) {
+			|| screen[curPieceY][curPieceX] == -2) {
 			return;
 		}
 	}
@@ -257,17 +280,19 @@ void drawMain()
 				case -2:
 					printf("□");
 					break;
+				case -1:
+					printf(". ");
+					break;
+
 				}
 			}
 		}
 	}
-	
 	for (int i = 0; i < main_height; i++) {
 		for (int j = 0; j < main_width; j++) {
 			screen_cpy[i][j] = screen[i][j];
 		}
 	}
-	
 }
 int check_crush()
 {
@@ -353,6 +378,10 @@ void dropDown()
 			for (int j = 0; j < 2; j++) {
 				curPiece(block, i);
 				screen[curPieceY][curPieceX] = -2;
+				for (int k = curPieceY; k < main_height - 1; k++) {
+					if (screen[k][curPieceX] == -1) screen[k][curPieceX] = 0;
+				}
+				
 			}
 		}
 		getShape();
@@ -366,11 +395,15 @@ void dropDown()
 void check_gameOver()
 {
 	for (int i = 1; i < main_width - 2; i++) {
-		if (screen[2][i] < 0) {
+		if (screen[2][i] == -2) {
 			gotoxy(main_x, main_y + 5); printf("▤▤▤▤▤▤▤▤▤▤▤");
 			gotoxy(main_x, main_y + 6);	printf("▤    GAME OVER     ▤ ");
 			gotoxy(main_x, main_y + 7); printf("▤▤▤▤▤▤▤▤▤▤▤");
-			Sleep(100000);
+			
+			Sleep(1000);
+			while (kbhit()) getch();
+			int key = getch();
+			reset();
 		}
 	}
 }
@@ -401,4 +434,23 @@ void getScore()
 void pause()
 {
 	getch();
+}
+
+void reset()
+{
+	score = 0;
+
+	system("cls");
+	setMain();
+
+	// 기존에 있는 screen_cpy 를 비워줍니다.
+	for (int i = 0; i < main_height; i++) {
+		for (int j = 0; j < main_width; j++) {
+			screen_cpy[i][j] = 0;
+		}
+	}
+
+	drawMain();
+
+	getShape();
 }
