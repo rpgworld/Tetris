@@ -106,6 +106,7 @@ void main()
 			Piece();
 			key_check();
 			Sleep(100);
+			if (check_crush()) Sleep(100);
 		}
 
 		dropDown();
@@ -304,6 +305,13 @@ void key_check()
 				Piece();
 				break;
 			case DOWN:
+				for (int i = 0; i < 4; i++) {
+					curPiece(block, i);
+					if (screen[curPieceY + 1][curPieceX] == 2
+						|| screen[curPieceY + 1][curPieceX] == -2) {
+						return true;
+					}
+				}
 				resetPiece();
 				by++;
 				Piece();
