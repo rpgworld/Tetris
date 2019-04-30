@@ -42,17 +42,6 @@ int shape[7][4][2] = {
 		{{1, -1}, {0, -1}, {0, 0}, {0, 1}}, // 7. ㄱ
 };
 
-struct point
-{
-	int xpos;
-	int ypos;
-};
-struct circle
-{
-	double radius;
-	struct point* center;
-};
-
 int main_width = 11; // 게임 폭, 높이
 int main_height = 22;
 
@@ -97,26 +86,6 @@ void main()
 	}
 }
 
-void circleTest()
-{
-	struct point cen = { 2, 6 };
-	double rad = 5.5;
-	struct circle ring = { rad, &cen };
-	printf("원의 반지름 : %g \n", ring.radius);
-	printf("원의 중심 : (%d, %d) \n", (ring.center)->xpos, (ring.center)->ypos);
-}
-void random()
-{
-	int i = 1;
-	srand((unsigned)time(NULL));
-	while (1) {
-
-		int r = (rand() % 7) + 1;
-		printf("%d 번째 값 : %d \n", i, r);
-		i++;
-		Sleep(1000);
-	}
-}
 void gotoxy(int x, int y)
 {
 	COORD Pos = { 2 * x, y };
