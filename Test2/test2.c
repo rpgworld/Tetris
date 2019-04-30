@@ -66,16 +66,6 @@ int shape[7][4][2] = {
 		{{1, -1}, {0, -1}, {0, 0}, {0, 1}}, // 7. ㄱ
 };
 
-struct point
-{
-int xpos;
-int ypos;
-};
-struct circle
-{
-	double radius;
-	struct point* center;
-};
 
 int main_width = 11; // 게임 폭, 높이
 int main_height = 22;
@@ -98,14 +88,11 @@ int x, y; // 블록 모양 좌표
 int curPieceX;
 int curPieceY;
 
-int crush_on = false;
-
 int score = 0; // 점수
-
-
 
 void main()
 {
+	system("cls");
 	setMain();
 	drawMain();
 
@@ -114,11 +101,12 @@ void main()
 	getShape();
 
 	while (1) {
-		drawMain();
-		Piece();
-		Sleep(300);
-
-		key_check();
+		for (int i = 0; i < 4; i++) {
+			drawMain();
+			Piece();
+			key_check();
+			Sleep(100);
+		}
 
 		dropDown();
 		check_line();
