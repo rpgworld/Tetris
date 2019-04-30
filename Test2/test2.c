@@ -13,6 +13,9 @@
 #define DOWN 80
 
 #define SPACE 32 // 입력키
+#define p 112 //일시정지 
+#define P 80 //일시정지
+#define ESC 27 //게임종료 
 
 void gotoxy(int x, int y);
 int getX(int block[4][2], int index); // 블록의 모양 좌표
@@ -35,6 +38,7 @@ void check_gameOver(); // 게임 오버 확인
 void check_line(); // 한줄이 가득 찼을때 이벤트 처리
 
 void getScore();
+void pause();
 
 typedef enum { NOCURSOR, SOLIDCURSOR, NORMALCURSOR } CURSOR_TYPE; //커서숨기기
 void setcursortype(CURSOR_TYPE c) { //커서숨기는 메서드 
@@ -106,7 +110,7 @@ void main()
 			Piece();
 			key_check();
 			Sleep(100);
-			if (check_crush()) Sleep(100);
+			if (check_crush()) Sleep(50);
 		}
 
 		dropDown();
@@ -163,6 +167,14 @@ void Piece()
 		curPiece(block, i);
 		screen[curPieceY][curPieceX] = 3;
 	}
+	/*
+	for (int i = 0; i < 4; i++) {
+		curPiece(block, i);
+		for (int i = curPieceY + 1; i < main_height; i++) {
+			
+		}
+	}
+	*/
 }
 void resetPiece()
 {
@@ -324,6 +336,11 @@ void key_check()
 				while (!check_crush()) {
 					dropDown();
 				}
+				break;
+			case p:
+			case P:
+				pause();
+				break;
 			}
 		}
 	}
@@ -350,9 +367,9 @@ void check_gameOver()
 {
 	for (int i = 1; i < main_width - 2; i++) {
 		if (screen[2][i] < 0) {
-			gotoxy(main_x, main_y + 5); printf("▤▤▤▤▤▤▤▤▤▤");
-			gotoxy(main_x, main_y + 6);	printf("▤    GAME OVER   ▤ ");
-			gotoxy(main_x, main_y + 7); printf("▤▤▤▤▤▤▤▤▤▤");
+			gotoxy(main_x, main_y + 5); printf("▤▤▤▤▤▤▤▤▤▤▤");
+			gotoxy(main_x, main_y + 6);	printf("▤    GAME OVER     ▤ ");
+			gotoxy(main_x, main_y + 7); printf("▤▤▤▤▤▤▤▤▤▤▤");
 			Sleep(100000);
 		}
 	}
@@ -380,4 +397,8 @@ void getScore()
 {
 	gotoxy(13, 4);
 	printf("Score : %d", score);
+}
+void pause()
+{
+	getch();
 }
