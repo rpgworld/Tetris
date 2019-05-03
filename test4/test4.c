@@ -106,7 +106,6 @@ int topScore = 0; // 최고 점수
 
 int level; // 레벨
 
-int countL = 0; // l 모양이 더 자주 나오도록..
 
 void main()
 {
@@ -164,12 +163,6 @@ void getShape()
 	by = 3;
 	int r = rand() % 7;
 
-	// 막대기가 너무 안나올 경우를 대비해서...?
-	if (countL == 8) {
-		r = 2;
-		countL = 0;
-	}
-
 	if (r == 4) {
 		isSquare = 1;
 	}
@@ -181,7 +174,6 @@ void getShape()
 			block[i][j] = shape[r][i][j];
 		}
 	}
-	countL++;
 }
 void Piece()
 {
@@ -250,12 +242,22 @@ void resetPiece(int block[4][2])
 void rotateRight()
 {
 	if (isSquare == 1) return;
+	for (int i = 0; i < 4; i++) { // 양쪽에 벽이 있을경우 무한 반복에 빠짐
+		curPiece(block_cpy, i);
+		if (screen[curPieceY][curPieceX + 1] == 1
+			|| screen[curPieceY][curPieceX + 1] == -2 
+			&& screen[curPieceY][curPieceX - 1] == 1
+			|| screen[curPieceY][curPieceX - 1] == -2) {
+			return;
+		}
+	}
+
 	for (int i = 0; i < 4; i++) {
 		setX(block_cpy, i, getY(block, i));
 		setY(block_cpy, i, -getX(block, i));
 	}
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) { // 양쪽에 벽이 있을경우 무한 반복에 빠짐
 		curPiece(block_cpy, i);
 		if (screen[curPieceY][curPieceX] == 1
 			|| screen[curPieceY][curPieceX] == -2) {
