@@ -242,12 +242,12 @@ void resetPiece(int block[4][2])
 void rotateRight()
 {
 	if (isSquare == 1) return;
-	for (int i = 0; i < 4; i++) { // 양쪽에 벽이 있을경우 무한 반복에 빠짐
+	for (int i = 0; i < 4; i++) { // 양쪽에 벽이 있을경우 무한 반복에 빠짐 -> 처리!
 		curPiece(block_cpy, i);
-		if (screen[curPieceY][curPieceX + 1] == 1
-			|| screen[curPieceY][curPieceX + 1] == -2 
-			&& screen[curPieceY][curPieceX - 1] == 1
-			|| screen[curPieceY][curPieceX - 1] == -2) {
+		if ((screen[curPieceY][curPieceX + 1] == 1
+			|| screen[curPieceY][curPieceX + 1] == -2 )
+			&& (screen[curPieceY][curPieceX - 1] == 1
+			|| screen[curPieceY][curPieceX - 1] == -2)) {
 			return;
 		}
 	}
