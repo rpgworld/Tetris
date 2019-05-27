@@ -23,10 +23,12 @@ int getY(int block[4][2], int index);
 int setX(int block[4][2], int index, int value); // 블록 좌표 변경
 int setY(int block[4][2], int index, int value);
 void getShape(); // 블록 모양 가져오기
+void new_block();
 void Piece(); // 블록 그리기
 void resetPiece(int block[4][2]); // 블록 초기화
 void rotateRight(); // 블록 회전
 void curPiece(int block[4][2], int index); // 게임 창에서의 블록 실제 위치
+void nextPiece(int block[4][2], int index);
 void shadowPiece(int block[4][2], int index);
 int getShadow();
 void resetShadow();
@@ -80,6 +82,7 @@ int main_height = 22;
 
 int main_x = 1; // 게임 창 위치
 int main_y = 2;
+int status_x = 13;
 
 int screen[22][11]; // 게임 창
 int screen_cpy[22][11];
@@ -90,6 +93,7 @@ int next_block[4][2]; // 다음 블록
 int shadow_block[4][2]; // 그림자 블록
 
 int isSquare = 0; // 네모 모양일때 회전이 되지 않게 하기 위해서
+int nSquare = 0;
 
 int bx, by; // 블록 위치 좌표
 int x, y; // 블록 모양 좌표
@@ -97,16 +101,19 @@ int x, y; // 블록 모양 좌표
 int curPieceX;
 int curPieceY;
 
+int nextPieceX;
+int nextPieceY;
+
 int shadowPieceX;
 int shadowPieceY;
 int shadowY = 5;
 
 int score = 0; // 점수
-int topScore = 0; // 최고 점수
+int lastScore = 0;
+int bestScore = 0; // 최고 점수
 
-int level = 1; // 레벨
+int level; // 레벨
 
-int countL = 0; // l 모양이 더 자주 나오도록..
 
 void main()
 {
@@ -116,7 +123,9 @@ void main()
 
 	srand(time(NULL));
 	setcursortype(NOCURSOR);
+	new_block();
 	getShape();
+	new_block();
 
 	while (1) {
 		for (int i = 0; i < 4; i++) {
@@ -162,26 +171,40 @@ void getShape()
 {
 	bx = (main_width / 2) + 1;
 	by = 3;
+	isSquare = nSquare;
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 2; j++) {
+			block[i][j] = next_block[i][j];
+		}
+	}
+}
+void new_block()
+{
 	int r = rand() % 7;
 
-	// 막대기가 너무 안나올 경우를 대비해서...?
-	if (countL == 8) {
-		r = 2;
-		countL = 0;
-	}
-
 	if (r == 4) {
-		isSquare = 1;
+		nSquare = 1;
 	}
 	else {
-		isSquare = 0;
+		nSquare = 0;
 	}
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 2; j++) {
-			block[i][j] = shape[r][i][j];
+			next_block[i][j] = shape[r][i][j];
 		}
 	}
-	countL++;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 4; j++) {
+			gotoxy(15 + i, 8 + j);
+			printf("  ");
+		}
+	}
+	for (int i = 0; i < 4; i++) {
+		nextPiece(next_block, i);
+		gotoxy(16 + nextPieceX, 9 + nextPieceY);
+		printf("■");
+	}
+
 }
 void Piece()
 {
@@ -209,7 +232,7 @@ int getShadow() {
 	for (int i = 0; i < 4; i++) {
 		shadowPiece(block, i);
 		if (screen[shadowPieceY + shadowY][shadowPieceX] == 2
-			|| screen[shadowPieceY + shadowY][shadowPieceX] == -2){
+			|| screen[shadowPieceY + shadowY][shadowPieceX] == -2) {
 			cnt++;
 		}
 	}
@@ -219,6 +242,10 @@ int getShadow() {
 	else {
 		return false;
 	}
+}
+void nextPiece(int block[4][2], int index) {
+	nextPieceX = getX(block, index);
+	nextPieceY = getY(block, index);
 }
 void shadowPiece(int block[4][2], int index) {
 	shadowPieceX = getX(block, index) + bx - main_x;
@@ -250,12 +277,22 @@ void resetPiece(int block[4][2])
 void rotateRight()
 {
 	if (isSquare == 1) return;
+	for (int i = 0; i < 4; i++) { // 양쪽에 벽이 있을경우 무한 반복에 빠짐 -> 처리!
+		curPiece(block_cpy, i);
+		if ((screen[curPieceY][curPieceX + 1] == 1
+			|| screen[curPieceY][curPieceX + 1] == -2)
+			&& (screen[curPieceY][curPieceX - 1] == 1
+				|| screen[curPieceY][curPieceX - 1] == -2)) {
+			return;
+		}
+	}
+
 	for (int i = 0; i < 4; i++) {
 		setX(block_cpy, i, getY(block, i));
 		setY(block_cpy, i, -getX(block, i));
 	}
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) { // 양쪽에 벽이 있을경우 무한 반복에 빠짐
 		curPiece(block_cpy, i);
 		if (screen[curPieceY][curPieceX] == 1
 			|| screen[curPieceY][curPieceX] == -2) {
@@ -432,6 +469,7 @@ void dropDown()
 			}
 		}
 		getShape();
+		new_block();
 	}
 	else {
 		resetPiece(block);
@@ -443,9 +481,16 @@ void check_gameOver()
 {
 	for (int i = 1; i < main_width - 2; i++) {
 		if (screen[2][i] == -2) {
-			gotoxy(main_x, main_y + 5); printf("▤▤▤▤▤▤▤▤▤▤▤");
-			gotoxy(main_x, main_y + 6);	printf("▤    GAME OVER     ▤ ");
-			gotoxy(main_x, main_y + 7); printf("▤▤▤▤▤▤▤▤▤▤▤");
+			gotoxy(main_x + 3, main_y + 5); printf("▤▤▤▤▤▤▤▤▤▤▤▤▤▤▤▤▤"); //게임오버 메세지 
+			gotoxy(main_x + 3, main_y + 6); printf("▤                              ▤");
+			gotoxy(main_x + 3, main_y + 7); printf("▤  +-----------------------+   ▤");
+			gotoxy(main_x + 3, main_y + 8); printf("▤  |  G A M E  O V E R..   |   ▤");
+			gotoxy(main_x + 3, main_y + 9); printf("▤  +-----------------------+   ▤");
+			gotoxy(main_x + 3, main_y + 10); printf("▤   YOUR SCORE: %6d         ▤", score);
+			gotoxy(main_x + 3, main_y + 11); printf("▤                              ▤");
+			gotoxy(main_x + 3, main_y + 12); printf("▤  Press any key to restart..  ▤");
+			gotoxy(main_x + 3, main_y + 13); printf("▤                              ▤");
+			gotoxy(main_x + 3, main_y + 14); printf("▤▤▤▤▤▤▤▤▤▤▤▤▤▤▤▤▤");
 
 			Sleep(1000);
 			while (kbhit()) getch();
@@ -475,25 +520,28 @@ void check_line()
 }
 void getScore()
 {
-	if (topScore == 0) {
+	level = (score / 1000) + 1;
 
-		gotoxy(13, 3);
-		printf("점수 : %d", score);
+	gotoxy(status_x, main_y + 2);
+	printf("LEVEL : %5d", level);
+
+	gotoxy(status_x, main_y + 3);
+	printf("SCORE : %5d", score);
+
+	gotoxy(status_x, main_y + 5); printf("┌NEXT BLOCK┐");
+	for (int i = 0; i < 4; i++) {
+		gotoxy(status_x, main_y + 6 + i); printf("│");
+		gotoxy(status_x + 6, main_y + 6 + i); printf("│");
 	}
-	else {
-		gotoxy(13, 3);
-		printf("최고 점수 : %d", topScore);
-
-		gotoxy(13, 5);
-		printf("점수 : %d", score);
-	}
-
-	if (score >= 1000 &&score % 1000 == 0) {
-		level++;
-	}
-
-	gotoxy(13, 7);
-	printf("레벨 : %d", level);
+	gotoxy(status_x , main_y + 10); printf("└─────┘");
+	gotoxy(status_x, main_y + 12); printf("BEST SCORE : %5d", bestScore);
+	gotoxy(status_x, main_y + 13); printf("LAST SCORE : %5d", lastScore);
+	gotoxy(status_x, main_y + 15); printf("  △   : Lotate ");
+	gotoxy(status_x, main_y + 16); printf("◁  ▷ : Left / Right");
+	gotoxy(status_x, main_y + 17); printf("  ▽   : Soft Drop");
+	gotoxy(status_x, main_y + 19); printf("SPACE : Hard Drop");
+	gotoxy(status_x, main_y + 20); printf("P   : Pause");
+	gotoxy(status_x, main_y + 21); printf("ESC  : Quit");
 }
 void pause()
 {
@@ -502,7 +550,10 @@ void pause()
 
 void reset()
 {
-	topScore = score;
+	lastScore = score;
+	if (bestScore < score) {
+		bestScore = score;
+	}
 	score = 0;
 
 	system("cls");

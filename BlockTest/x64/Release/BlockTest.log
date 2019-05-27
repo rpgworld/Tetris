@@ -1,0 +1,23 @@
+﻿  block.c
+c:\users\305\desktop\c언어\tetris\blocktest\block.c(124): warning C4244: '함수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\305\desktop\c언어\tetris\blocktest\block.c(436): warning C4098: 'key_check': 'void' 함수에서 값을 반환하고 있습니다.
+c:\users\305\desktop\c언어\tetris\blocktest\block.c(397): warning C4996: 'kbhit': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _kbhit. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\conio.h(459): note: 'kbhit' 선언을 참조하십시오.
+c:\users\305\desktop\c언어\tetris\blocktest\block.c(398): warning C4996: 'getch': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getch. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\conio.h(453): note: 'getch' 선언을 참조하십시오.
+c:\users\305\desktop\c언어\tetris\blocktest\block.c(400): warning C4996: 'getch': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getch. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\conio.h(453): note: 'getch' 선언을 참조하십시오.
+c:\users\305\desktop\c언어\tetris\blocktest\block.c(459): warning C4996: 'kbhit': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _kbhit. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\conio.h(459): note: 'kbhit' 선언을 참조하십시오.
+c:\users\305\desktop\c언어\tetris\blocktest\block.c(496): warning C4996: 'kbhit': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _kbhit. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\conio.h(459): note: 'kbhit' 선언을 참조하십시오.
+c:\users\305\desktop\c언어\tetris\blocktest\block.c(497): warning C4996: 'getch': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getch. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\conio.h(453): note: 'getch' 선언을 참조하십시오.
+c:\users\305\desktop\c언어\tetris\blocktest\block.c(548): warning C4996: 'getch': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getch. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\conio.h(453): note: 'getch' 선언을 참조하십시오.
+  코드를 생성하고 있습니다.
+c:\users\305\desktop\c언어\tetris\blocktest\block.c(169): warning C4716: 'setY': 값을 반환해야 합니다.
+c:\users\305\desktop\c언어\tetris\blocktest\block.c(165): warning C4716: 'setX': 값을 반환해야 합니다.
+  All 30 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  코드를 생성했습니다.
+  BlockTest.vcxproj -> C:\Users\305\Desktop\C언어\Tetris\x64\Release\BlockTest.exe
