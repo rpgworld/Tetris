@@ -132,7 +132,7 @@ void main()
 			drawMain();
 			Piece();
 			key_check();
-			Sleep(100);
+			Sleep(100-level*3);
 			if (check_crush()) Sleep(50);
 		}
 
@@ -283,6 +283,13 @@ void rotateRight()
 			|| screen[curPieceY][curPieceX + 1] == -2)
 			&& (screen[curPieceY][curPieceX - 1] == 1
 				|| screen[curPieceY][curPieceX - 1] == -2)) {
+			return;
+		}
+	}
+	for (int i = 0; i < 4; i++) { // ¹Ù´ÚÀÌ³ª ±»Àº ºí·°°ú ºÎµúÃÆÀ»¶§ È¸Àü½Ã Á¤Áö»óÅÂ¿¡ ºüÁü -> Ã³¸®!
+		curPiece(block_cpy, i);
+		if ((screen[curPieceY+1][curPieceX] == 2
+			|| screen[curPieceY+1][curPieceX] == -2)) {
 			return;
 		}
 	}
